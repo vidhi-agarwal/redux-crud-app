@@ -2,37 +2,70 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { editUser, deleteUser, initUser } from '../store/users';
 import UserRow from './userRow';
+import Hoc from './hoc';
+import Modal from './Modal';
 
 class table extends Component {
+	state = {
+		modal: -1,
+	};
 	componentDidMount() {
 		this.props.onInitUser();
+	}
+
+	handleUpdate(id, name, email) {
+		this.props.onUserEdit(id, name, email);
 	}
 
 	render() {
 		if (this.props.users) {
 			return (
-				<table className='table'>
-					<tr>
-						<th>ID</th>
-						<th>Name</th>
-						<th>Email</th>
-					</tr>
-					{this.props.users.map((user) => {
-						if (user) {
-							return (
-								<UserRow
-									deleteHandle={(uid) => this.props.onUserDelete(uid)}
-									editHandle={(uid, uname, uemail) =>
-										this.props.onUserEdit(uid, uname, uemail)
-									}
-									id={user.id}
-									name={user.name}
-									email={user.email}></UserRow>
-							);
-						}
-						return null;
-					})}
-				</table>
+				<div>
+					<div
+						className='delete-button'
+						onClick={() => {
+							if (window.confirm('Are you sure you wish to delete this item?'))
+								this.onCancel();
+						}}
+					/>
+					<table className='table'>
+						<tr>
+							<th>ID</th>
+							<th>Name</th>
+							<th>Email</th>
+						</tr>
+						{this.props.users.map((user) => {
+							if (user) {
+								return (
+									<Hoc>
+										<UserRow
+											deleteHandle={(uid) => this.props.onUserDelete(uid)}
+											editHandle={() => {
+												this.setState({ modal: user.id });
+											}}
+											id={user.id}
+											name={user.name}
+											email={user.email}></UserRow>
+										{this.state.modal === user.id ? (
+											<Modal
+												name={user.name}
+												email={user.email}
+												closed={() => {
+													this.setState({ modal: -1 });
+												}}
+												saveModalDetails={(item) => {
+													this.setState({ modal: -1 });
+													this.handleUpdate(user.id, item.name, item.email);
+												}}
+											/>
+										) : null}
+									</Hoc>
+								);
+							}
+							return null;
+						})}
+					</table>
+				</div>
 			);
 		} else {
 			return <h1>Loading</h1>;

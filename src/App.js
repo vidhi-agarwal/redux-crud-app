@@ -1,5 +1,4 @@
 import React from 'react';
-
 import Table from './containers/Table';
 import 'bootstrap/dist/css/bootstrap.min.css';
 

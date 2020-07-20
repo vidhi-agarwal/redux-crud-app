@@ -9,17 +9,21 @@ const userRow = (props) => {
 			<td
 				button
 				type='button'
-				class='btn btn-primary mr-3 '
-				onClick={() =>
-					props.editHandle(props.id, 'NAME ENTERED HERE', 'EMAIL ENTERED HERE')
-				}>
+				class='btn btn-primary'
+				onClick={() => {
+					props.editHandle();
+				}}>
 				Edit
 			</td>
 			<td
 				button
 				type='button'
 				class='btn btn-danger'
-				onClick={() => props.deleteHandle(props.id)}>
+				onClick={() => {
+					if (window.confirm('Are you sure you wish to delete this item?')) {
+						props.deleteHandle(props.id);
+					}
+				}}>
 				Delete
 			</td>
 		</tr>
